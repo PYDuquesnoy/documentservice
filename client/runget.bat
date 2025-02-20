@@ -1,0 +1,1 @@
+python get_doc.py http://localhost:32773/csp/documentservice _SYSTEM SYS File_3.bin

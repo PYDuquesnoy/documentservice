@@ -1,0 +1,137 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Upload and Download Documents via REST/JSON",
+    "version": "1.0",
+    "title": "REST Document Service",
+    "contact": {
+      "email": "Pierre-Yves.Duquesnoy@intersystems.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "127.0.0.1",
+  "basePath": "/csp/documentservice",
+  "tags": [
+    {
+      "name": "documents",
+      "description": "Document Management"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic",
+      "description": "Basic Authentication with UserName And Password This requires HTTPS To secure communications"
+    }
+  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
+  "paths": {
+    "/document": {
+      "post": {
+        "operationId": "PostDocument",
+        "summary": "Uploads a Document in Base64 Format",
+        "description": "Adds a new Document in the FilSystem and returns a DocumentID Reference to download",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Document information",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fileName": {
+                  "type": "string",
+                  "description": "Name and File Extension",
+                  "example": "MyDoc.pdf"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "Document Content as Base64",
+                  "example": "JVBERi0xLjQKJcTl8uXrp/Og0MTGCj"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reference": {
+                  "type": "string",
+                  "description": "A Unique refence to the Stored Document",
+                  "example": 1
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal server error"
+          }
+        }
+      }
+    },
+    "/document/{reference}": {
+      "get": {
+        "operationId": "GetDocument",
+        "summary": "Downloads the referenced Document",
+        "description": "returns the content of 1 Document",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "reference",
+            "in": "path",
+            "description": "A Reference to the Document",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response returning a JSON object",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "The Document content as Base64",
+                  "example": "QWxpY2UgSW4gV29uZGVybGFuZA=="
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "422": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    }
+  }
+}
